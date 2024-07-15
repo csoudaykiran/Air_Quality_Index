@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AQI Prediction Result</title>
+    <style>
+        /* Add your CSS styling here */
+        body {
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+        }
+
+        .progress-container {
+            width: 200px;
+            height: 200px;
+            margin: 50px auto;
+            position: relative;
+        }
+
+        .progress-circle {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+            transform-origin: center;
+        }
+
+        .progress-background {
+            fill: none;
+            stroke: #ddd;
+            stroke-width: 10;
+        }
+
+        .progress-value {
+            fill: none;
+            stroke-width: 10;
+            stroke-dasharray: 0;
+            stroke-linecap: round;
+            transition: stroke-dasharray 1s ease-in-out;
+        }
+
+        .progress-category {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 24px;
+            margin-top: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #555;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Air Quality Index Predictor</h1>
+    <div class="progress-container">
+        <svg class="progress-circle" viewBox="0 0 100 100">
+            <circle class="progress-background" cx="50" cy="50" r="40" />
+            <circle class="progress-value" cx="50" cy="50" r="40" />
+        </svg>
+        <div class="progress-category">{{ predicted_category }}</div>
+    </div>
+    <h2>Predicted AQI Value: {{ predicted_aqi_value }}</h2>
+    <h2>Predicted AQI Category: {{ predicted_category }}</h2>
+
+    <script>
+        // Calculate the percentage value for progress bar
+        var predictedAqiValue = {{ predicted_aqi_value }};
+        var percentageValue = Math.min(predictedAqiValue, 100);
+
+        // Set the stroke-dasharray property for progress bar
+        var progressValueElement = document.querySelector('.progress-value');
+        var circumference = 2 * Math.PI * 40;
+        var offset = (percentageValue / 100) * circumference;
+        progressValueElement.style.strokeDasharray = `${offset} ${circumference}`;
+        
+        var predictedCategory = "{{ predicted_category }}";
+        if (predictedAqiValue >= 0 && predictedAqiValue <= 50) {
+            progressValueElement.style.stroke = "#00ff00"; // Green color for AQI 0-50
+        } else if (predictedAqiValue <= 100) {
+            progressValueElement.style.stroke = "#ffff00"; // Yellow color for AQI 51-100
+        } else if (predictedAqiValue <= 150) {
+            progressValueElement.style.stroke = "#ffa500"; // Orange color for AQI 101-150
+        } else if (predictedAqiValue <= 200) {
+            progressValueElement.style.stroke = "#ff0000"; // Red color for AQI 151-200
+        } else if (predictedAqiValue <= 300) {
+            progressValueElement.style.stroke = "#800080"; // Purple color for AQI 201-300
+        } else {
+            progressValueElement.style.stroke = "#800000"; // Maroon color for AQI 301-500
+        }
+
+        // Update the progress category text
+        var progressCategoryElement = document.querySelector('.progress-category');
+        progressCategoryElement.textContent = predictedCategory;
+    </script>
+</body>
+</html>
